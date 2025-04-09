@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Course</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .form-container {
+            max-width: 700px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container form-container">
+    <h3 class="mb-4 text-center">✏️ Edit Course - {{ course.course_id }}</h3>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <!-- Course Details -->
+        <div class="mb-3">
+            <label for="course_name" class="form-label">Course Name</label>
+            <input type="text" class="form-control" id="course_name" name="course_name" value="{{ course.course_name }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="department" class="form-label">Department</label>
+            <input type="text" class="form-control" id="department" name="department" value="{{ course.department }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="3" required>{{ course.description }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="credits" class="form-label">Credits</label>
+            <input type="number" class="form-control" id="credits" name="credits" value="{{ course.credits }}" min="1" max="6" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="max_capacity" class="form-label">Max Capacity</label>
+            <input type="number" class="form-control" id="max_capacity" name="max_capacity" value="{{ course.max_capacity }}" min="1" max="25" required>
+        </div>
+
+
+
+
+        <!-- Professor Dropdown -->
+        <div class="mb-3">
+            <label for="professor_id" class="form-label">Professor</label>
+            <select class="form-select" id="professor_id" name="professor_id" required>
+                <option value="">-- Select Professor --</option>
+                {% for prof in professors %}
+                    <option value="{{ prof.professor_id }}" {% if prof.professor_id == current_professor_id %}selected{% endif %}>
+                        {{ prof.professor_name }} ({{ prof.department }})
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Schedule Fields -->
+        <div class="mb-3">
+            <label for="day_of_week" class="form-label">Day of the Week</label>
+            <select class="form-select" id="day_of_week" name="day_of_week" required>
+                {% set days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'] %}
+                {% for day in days %}
+                    <option value="{{ day }}" {% if day_of_week == day %}selected{% endif %}>{{ day }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col">
+                <label for="start_time" class="form-label">Start Time</label>
+                <input type="time" class="form-control" id="start_time" name="start_time" value="{{ start_time }}" required>
+            </div>
+            <div class="col">
+                <label for="end_time" class="form-label">End Time</label>
+                <input type="time" class="form-control" id="end_time" name="end_time" value="{{ end_time }}" required>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="location" class="form-label">Location</label>
+            <input type="text" class="form-control" id="location" name="location" value="{{ location }}" required>
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary">💾 Save Changes</button>
+            <a href="{{ url_for('routes.admin_dashboard') }}" class="btn btn-secondary">⬅️ Cancel</a>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

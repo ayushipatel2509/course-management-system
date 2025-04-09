@@ -1,0 +1,32 @@
+<!-- app/templates/enrolled_students.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>👥 Students Enrolled in {{ course_id }}</h2>
+    <a href="{{ url_for('routes.admin_dashboard') }}" class="btn btn-secondary mb-3">⬅️ Back to Dashboard</a>
+
+    {% if students %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td>{{ student['student_id'] }}</td>
+                    <td>{{ student['student_name'] }}</td>
+                    <td>{{ student['student_email'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info">No students enrolled in this course.</div>
+    {% endif %}
+</div>
+{% endblock %}
