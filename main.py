@@ -85,131 +85,51 @@ print("✅ Database and tables initialized successfully.")
 cursor.executescript("""
 -- 🧑‍🏫 Professors
 INSERT OR IGNORE INTO Professors (professor_name, department, professor_email) VALUES
-('Dr. Smith', 'Computer Science', 'smith@msu.edu'),
-('Dr. Jones', 'Computer Science', 'jones@msu.edu'),
-('Dr. Patel', 'Mathematics', 'patel@msu.edu'),
-('Dr. Williams', 'Data Science', 'williams@msu.edu'),
-('Dr. Brown', 'Cybersecurity', 'brown@msu.edu');
+('Dr. James Smith', 'Computer Science', 'jsmith@msu.edu'),
+('Prof. Emily Jones', 'Computer Science', 'ejones@msu.edu'),
+('Dr. Raj Patel', 'Mathematics', 'rpatel@msu.edu'),
+('Dr. Olivia Williams', 'Data Science', 'owilliams@msu.edu'),
+('Prof. Michael Brown', 'Cybersecurity', 'mbrown@msu.edu'),
+('Dr. Sarah Taylor', 'Information Systems', 'staylor@msu.edu'),
+('Prof. Robert Johnson', 'Software Engineering', 'rjohnson@msu.edu'),
+('Dr. Linda Lee', 'Artificial Intelligence', 'llee@msu.edu'),
+('Prof. Carlos Garcia', 'Statistics', 'cgarcia@msu.edu'),
+('Dr. Ana Martinez', 'Information Technology', 'amartinez@msu.edu'),
+('Prof. Kevin Clark', 'Machine Learning', 'kclark@msu.edu'),
+('Dr. Laura Lewis', 'Cybersecurity', 'llewis@msu.edu'),
+('Prof. Daniel Walker', 'Data Analytics', 'dwalker@msu.edu'),
+('Dr. Sophia Hall', 'Computer Networks', 'shall@msu.edu'),
+('Prof. Brian Allen', 'Human-Computer Interaction', 'ballen@msu.edu');
+
 
 
 -- Students
 INSERT OR IGNORE INTO Students(student_id,student_name,student_email ,student_phone,gpa) VALUES
-('111','Kruti','kruti@gmail.com' , '2323232323' , 3),
-('112','Shivam','shivam@gmail.com' , '2324444443' , 4),
-('113','Prachi','prachi@gmail.com' , '2786787586' , 3),
-('114','Vishu','vishu@gmail.com' , '9090909090' , 2),
-('115','Samarth','samarth@gmail.com' , '8877887788' , 4);
+('111','Kruti','kruti@gmail.com' , '2323232323' , 3);
 
 
 -- 📘 Courses
 INSERT OR IGNORE INTO Courses (course_id, course_name, department, description, credits, max_capacity) VALUES
-('CS101', 'Intro to Programming', 'Computer Science', 'Basics of programming in Python', 3, 25),
-('CS102', 'Web Dev Fundamentals', 'Computer Science', 'HTML, CSS, JS basics', 3, 25),
-('CS201', 'Data Structures', 'Computer Science', 'Study of data organization', 3, 25),
-('CS202', 'OOP with Java', 'Computer Science', 'Object-oriented programming', 3, 25),
-('CS301', 'Algorithms', 'Computer Science', 'Algorithm design and analysis', 3, 25),
-('CS302', 'Operating Systems', 'Computer Science', 'Processes, threads, memory', 3, 25),
-('CS303', 'Networks', 'Computer Science', 'Network protocols and architecture', 3, 25),
-('CS304', 'Mobile App Dev', 'Computer Science', 'iOS and Android basics', 3, 25),
-('CS401', 'Databases', 'Computer Science', 'Relational databases and SQL', 3, 25),
-('CS402', 'AI Fundamentals', 'Computer Science', 'Basics of AI and ML', 3, 25),
-('CS403', 'Machine Learning', 'Computer Science', 'Supervised & unsupervised learning', 3, 25),
-('CS404', 'Deep Learning', 'Computer Science', 'Neural networks, CNNs', 3, 25),
-('CS405', 'Computer Vision', 'Computer Science', 'Image processing and vision', 3, 25),
-('CS406', 'Cloud Computing', 'Computer Science', 'AWS, Azure, cloud services', 3, 25),
-('CS407', 'Software Engineering', 'Computer Science', 'Agile, testing, SDLC', 3, 25),
-('CS408', 'Full Stack Dev', 'Computer Science', 'React, Flask, APIs', 3, 25),
-('DS101', 'Intro to Data Science', 'Data Science', 'Data analysis and visualization', 3, 25),
-('DS201', 'Big Data Analytics', 'Data Science', 'Hadoop, Spark, MapReduce', 3, 25),
-('DS202', 'Data Wrangling', 'Data Science', 'Data cleaning techniques', 3, 25),
-('DS301', 'Predictive Analytics', 'Data Science', 'Regression, forecasting', 3, 25),
-('DS302', 'Data Ethics', 'Data Science', 'Privacy, fairness, ethics', 3, 25),
-('CS409', 'Cybersecurity Basics', 'Cybersecurity', 'Threats and attacks', 3, 25),
-('CS410', 'Cryptography', 'Cybersecurity', 'Encryption techniques', 3, 25),
-('CS411', 'Ethical Hacking', 'Cybersecurity', 'Penetration testing', 3, 25),
-('MATH101', 'Discrete Math', 'Mathematics', 'Logic, proofs, sets', 3, 25),
-('CS501', 'Advanced Web Dev', 'Computer Science', 'Advanced HTML, CSS, JS, Node.js', 3, 25),
-('CS502', 'Advanced Data Structures', 'Computer Science', 'Heaps, Tries, AVL Trees', 3, 25),
-('CS503', 'Advanced Algorithms', 'Computer Science', 'Dynamic Programming, Greedy', 3, 25),
-('DS401', 'Advanced Machine Learning', 'Data Science', 'XGBoost, Ensemble models', 3, 25),
-('CS504', 'Parallel Computing', 'Computer Science', 'Multithreading, GPUs', 3, 25),
-('CS999', 'Hacking 101', 'Cybersecurity', 'Ethical Hacking Basics', 3, 25),
-('CS998', 'Intro to VR', 'Computer Science', 'VR app development', 3, 25);
+('CS101', 'Adv Programming', 'Computer Science', 'Adv programming in Python', 3, 25),
+('CS102', 'Intro to Programming', 'Computer Science', 'Basics of programming in Python', 3, 25);
+
 
 -- 🔗 Prerequisites (selected only for few courses)
 INSERT OR IGNORE INTO Prerequisites (course_id, prerequisite_id) VALUES
-('CS201', 'CS101'),
-('CS201', 'CS411'),
-('CS202', 'CS401'),
-('CS202', 'CS504'),
-('CS302', 'CS201'),
-('CS303', 'CS201'),
-('CS401', 'CS201'),
-('CS402', 'CS301'),
-('CS403', 'CS402'),
-('CS404', 'CS403'),
-('CS405', 'CS403'),
-('CS408', 'CS102'),
-('DS201', 'DS101'),
-('DS301', 'DS201');
+('CS102','CS101');
+
+
 
 -- 🕒 Schedule
 INSERT OR IGNORE INTO Schedule (course_id, day_of_week, start_time, end_time, location) VALUES
-('CS101', 'Monday', '09:00', '10:15', 'Room 101'),
-('CS102', 'Tuesday', '10:30', '11:45', 'Room 102'),
-('CS201', 'Wednesday', '12:00', '13:15', 'Room 103'),
-('CS202', 'Thursday', '13:30', '14:45', 'Room 104'),
-('CS301', 'Friday', '15:00', '16:15', 'Room 105'),
-('CS302', 'Monday', '09:00', '10:15', 'Room 106'),
-('CS303', 'Tuesday', '10:30', '11:45', 'Room 107'),
-('CS304', 'Wednesday', '12:00', '13:15', 'Room 108'),
-('CS401', 'Thursday', '13:30', '14:45', 'Room 109'),
-('CS402', 'Friday', '15:00', '16:15', 'Room 110'),
-('CS403', 'Monday', '09:00', '10:15', 'Room 111'),
-('CS404', 'Tuesday', '10:30', '11:45', 'Room 112'),
-('CS405', 'Wednesday', '12:00', '13:15', 'Room 113'),
-('CS406', 'Thursday', '13:30', '14:45', 'Room 114'),
-('CS407', 'Friday', '15:00', '16:15', 'Room 115'),
-('CS408', 'Monday', '09:00', '10:15', 'Room 116'),
-('DS101', 'Tuesday', '10:30', '11:45', 'Room 117'),
-('DS201', 'Wednesday', '12:00', '13:15', 'Room 118'),
-('DS202', 'Thursday', '13:30', '14:45', 'Room 119'),
-('DS301', 'Friday', '15:00', '16:15', 'Room 120'),
-('DS302', 'Monday', '09:00', '10:15', 'Room 121'),
-('CS409', 'Tuesday', '10:30', '11:45', 'Room 122'),
-('CS410', 'Wednesday', '12:00', '13:15', 'Room 123'),
-('CS411', 'Thursday', '13:30', '14:45', 'Room 124'),
-('MATH101', 'Friday', '15:00', '16:15', 'Room 125'),
-('CS999', 'Monday', '09:00', '10:15', 'Room 999'),
-('CS998', 'Monday', '09:00', '10:15', 'Room 998');
+('CS101', 'Monday', '09:00', '10:15', 'Room 101');
+
 
 -- 👨‍🏫 Teaching assignments
 INSERT OR IGNORE INTO Teaching (course_id, professor_id) VALUES
-('CS101', 1),
-('CS102', 1),
-('CS201', 1),
-('CS202', 1),
-('CS301', 2),
-('CS302', 2),
-('CS303', 2),
-('CS304', 2),
-('CS401', 2),
-('CS402', 3),
-('CS403', 3),
-('CS404', 3),
-('CS405', 3),
-('CS406', 3),
-('CS407', 3),
-('CS408', 1),
-('DS101', 4),
-('DS201', 4),
-('DS202', 4),
-('DS301', 4),
-('DS302', 4),
-('CS409', 5),
-('CS410', 5),
-('CS411', 5),
-('MATH101', 3);
+('CS101', 1);
+
+
 """)
 
 conn.commit()

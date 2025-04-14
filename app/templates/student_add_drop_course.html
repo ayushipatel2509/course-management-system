@@ -4,13 +4,24 @@
     <meta charset="UTF-8">
     <title>Enroll / Drop Courses</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .search-bar {
+            max-width: 400px;
+            margin: auto;
+        }
+    </style>
 </head>
 <body class="bg-light">
 
 <div class="container mt-5">
     <h2 class="mb-4 text-center">📚 Enroll / Drop Courses</h2>
 
-    <!-- Flash Messages -->
+    <!-- 🔍 Search -->
+    <div class="search-bar mb-3">
+        <input type="text" id="searchInput" class="form-control" placeholder="🔍 Search courses by name...">
+    </div>
+
+    <!-- ⚠️ Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, message in messages %}
@@ -22,19 +33,23 @@
       {% endif %}
     {% endwith %}
 
-    <!-- Courses Table -->
+    <!-- 📋 Courses Table -->
     <table class="table table-bordered table-hover bg-white shadow-sm">
         <thead class="table-secondary">
             <tr>
                 <th>Course ID</th>
-                <th>Course Name</th>
+                <th>Name</th>
                 <th>Department</th>
                 <th>Credits</th>
                 <th>Professor</th>
+                <th>Day</th>
+                <th>Time</th>
+                <th>Location</th>
+                <th>Slots Available</th>
                 <th>Action</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="courseTable">
             {% for course in courses %}
             <tr>
                 <td>{{ course.course_id }}</td>
@@ -42,19 +57,28 @@
                 <td>{{ course.department }}</td>
                 <td>{{ course.credits }}</td>
                 <td>{{ course.professor_name or "TBD" }}</td>
+                <td>{{ course.day_of_week or "TBD" }}</td>
+                <td>{{ course.time or "TBD" }}</td>
+                <td>{{ course.location or "TBD" }}</td>
+                <td>
+                    {{ course.max_capacity - course.current_enrolled }} of {{ course.max_capacity }}
+                </td>
                 <td>
                     {% if course.course_id in enrolled %}
-                    <!-- Drop Button -->
-                    <form action="{{ url_for('routes.drop_course') }}" method="POST" class="d-inline">
-                        <input type="hidden" name="drop_course_id" value="{{ course.course_id }}">
-                        <button type="submit" class="btn btn-danger btn-sm">Drop</button>
-                    </form>
+                        <!-- Drop Button -->
+                        <form action="{{ url_for('routes.drop_course') }}" method="POST" class="d-inline">
+                            <input type="hidden" name="drop_course_id" value="{{ course.course_id }}">
+                            <button type="submit" class="btn btn-danger btn-sm">Drop</button>
+                        </form>
+                    {% elif course.current_enrolled < course.max_capacity %}
+                        <!-- Enroll Button -->
+                        <form action="{{ url_for('routes.enroll_course') }}" method="POST" class="d-inline">
+                            <input type="hidden" name="add_course_id" value="{{ course.course_id }}">
+                            <button type="submit" class="btn btn-success btn-sm">Enroll</button>
+                        </form>
                     {% else %}
-                    <!-- Enroll Button -->
-                    <form action="{{ url_for('routes.enroll_course') }}" method="POST" class="d-inline">
-                        <input type="hidden" name="add_course_id" value="{{ course.course_id }}">
-                        <button type="submit" class="btn btn-success btn-sm">Enroll</button>
-                    </form>
+                        <!-- Full -->
+                        <button class="btn btn-secondary btn-sm" disabled>Full</button>
                     {% endif %}
                 </td>
             </tr>
@@ -62,12 +86,30 @@
         </tbody>
     </table>
 
+    <!-- 🔙 Back Button -->
     <div class="text-center mt-4">
         <a href="{{ url_for('routes.student_dashboard') }}" class="btn btn-outline-secondary">⬅ Back to Dashboard</a>
     </div>
 </div>
 
-<!-- Bootstrap JS -->
+<!-- Bootstrap Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- 🔍 JavaScript Search -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('searchInput');
+        const rows = document.querySelectorAll('#courseTable tr');
+
+        searchInput.addEventListener('input', function () {
+            const query = this.value.toLowerCase();
+            rows.forEach(row => {
+                const courseName = row.cells[1].textContent.toLowerCase();
+                row.style.display = courseName.includes(query) ? '' : 'none';
+            });
+        });
+    });
+</script>
+
 </body>
 </html>

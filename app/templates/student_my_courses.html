@@ -19,6 +19,9 @@
                 <th>Department</th>
                 <th>Credits</th>
                 <th>Professor</th>
+                <th>Day</th>
+                <th>Time</th>
+                <th>Location</th>
             </tr>
         </thead>
         <tbody>
@@ -29,6 +32,9 @@
                 <td>{{ course.department }}</td>
                 <td>{{ course.credits }}</td>
                 <td>{{ course.professor_name or "TBD" }}</td>
+                <td>{{ course.day_of_week or "TBD" }}</td>
+                <td>{{ course.time or "TBD" }}</td>
+                <td>{{ course.location or "TBD" }}</td>
             </tr>
             {% endfor %}
         </tbody>
