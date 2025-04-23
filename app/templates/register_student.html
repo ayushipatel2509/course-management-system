@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card shadow p-4 w-100" style="max-width: 600px;">
+        <h2 class="text-center mb-4 text-primary fw-bold"> Student Registration</h2>
+
+        <form method="POST" onsubmit="return validatePasswordMatch()">
+            <!-- Student ID -->
+            <div class="mb-3">
+                <label class="form-label">Student ID</label>
+                <input type="text" class="form-control" name="student_id" required>
+            </div>
+
+            <!-- Full Name -->
+            <div class="mb-3">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-control" name="full_name" required>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+                <label class="form-label">Email Address</label>
+                <input type="email" class="form-control" name="email" required>
+            </div>
+
+            <!-- Phone -->
+            <div class="mb-3">
+                <label class="form-label">Phone Number</label>
+                <input type="text" class="form-control" name="phone" >
+            </div>
+
+            <!-- GPA -->
+            <div class="mb-3">
+                <label class="form-label">GPA (0.00 - 4.00)</label>
+                <input type="text" class="form-control" name="gpa"
+                       pattern="^([0-3](\\.\\d{1,2})?|4(\\.0{1,2})?)$"
+                       title="Enter a GPA between 0.00 and 4.00">
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-control" name="password" id="passwordInput" required>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="mb-4">
+                <label class="form-label">Re-enter Password</label>
+                <input type="password" class="form-control" name="confirm_password" id="confirmPasswordInput" required>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-grid mb-3">
+                <button type="submit" class="btn btn-primary btn-lg">Register</button>
+            </div>
+
+            <!-- Redirect to Login -->
+            <div class="text-center">
+                <small>Already registered?
+                    <a href="{{ url_for('routes.login') }}" class="text-decoration-none fw-semibold">Login here</a>
+                </small>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function validatePasswordMatch() {
+        const password = document.getElementById("passwordInput").value;
+        const confirm = document.getElementById("confirmPasswordInput").value;
+        if (password !== confirm) {
+            alert("❌ Passwords do not match.");
+            return false;
+        }
+        return true;
+    }
+</script>
+{% endblock %}

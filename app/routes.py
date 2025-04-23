@@ -9,62 +9,86 @@ routes = Blueprint('routes', __name__)
 
 @routes.route('/')
 def home():
-    return redirect(url_for('routes.register'))
+    return render_template('role_selection.html')
 
-
-#---------- Registration Page -------------------
-@routes.route('/register', methods=['GET', 'POST'])
-def register():
+#--------------------student register----------------------
+@routes.route('/register/student', methods=['GET', 'POST'])
+def register_student():
     if request.method == 'POST':
-        full_name = request.form['full_name']
+        name = request.form['full_name']
+        student_id = request.form['student_id']
         email = request.form['email']
         phone = request.form['phone']
-        student_id = request.form.get('student_id')  # Only present if student
+        gpa = request.form.get('gpa')
         password = request.form['password']
         confirm_password = request.form['confirm_password']
-        role = request.form['role']
-        department = request.form['department'] if role == 'admin' else None
 
-        # Validate passwords match and complexity
         if password != confirm_password:
             flash("❌ Passwords do not match.", "danger")
-            return redirect(url_for('routes.register'))
-
-        import re
-        if not re.match(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+=\-{}[\]:;"\'<>,.?/\\|~`]).{6,}$', password):
-            flash("❌ Password must contain at least one letter, one number, one special character, and be 6+ characters.", "danger")
-            return redirect(url_for('routes.register'))
+            return redirect(url_for('routes.register_student'))
 
         hashed_password = generate_password_hash(password)
-
         conn = get_db_connection()
         try:
-            if role == 'student':
-                conn.execute("""
-                    INSERT INTO Users (full_name, email, phone, student_id, password, role)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                """, (full_name, email, phone, student_id, hashed_password, role))
-            else:
-                conn.execute("""
-                    INSERT INTO Users (full_name, email, phone, password, role, department)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                """, (full_name, email, phone, hashed_password, role, department))
+            conn.execute("INSERT INTO Users (email, password, role) VALUES (?, ?, ?)",
+                         (email, hashed_password, 'student'))
+
+            conn.execute(
+                "INSERT INTO Students (student_id, student_name, student_email, student_phone, gpa) VALUES (?, ?, ?, ?, ?)",
+                (student_id, name, email, phone, gpa)
+            )
 
             conn.commit()
-            flash('✅ Registered successfully!', 'success')
+            flash("✅ Registered successfully!", "success")
             return redirect(url_for('routes.login'))
 
         except Exception as e:
-            flash(f'❌ Registration failed: {e}', 'danger')
+            flash(f"❌ Registration failed: {e}", "danger")
         finally:
             conn.close()
 
-    return render_template('register.html')
+    return render_template('register_student.html')
 
 
+#------------------admin register-------------------------
+@routes.route('/register/admin', methods=['GET', 'POST'])
+def register_admin():
+    if request.method == 'POST':
+        name = request.form['full_name']
+        email = request.form['email']
+        phone = request.form['phone']
+        department = request.form['department']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+
+        if password != confirm_password:
+            flash("❌ Passwords do not match.", "danger")
+            return redirect(url_for('routes.register_admin'))
+
+        hashed_password = generate_password_hash(password)
+        conn = get_db_connection()
+        try:
+            # Insert login credentials
+            conn.execute("INSERT INTO Users (email, password, role) VALUES (?, ?, ?)",
+                         (email, hashed_password, 'admin'))
+
+            # Insert admin profile in Professors
+            conn.execute("INSERT INTO Professors (professor_name, professor_email, department) VALUES (?, ?, ?)",
+                         (name, email, department))
+
+            conn.commit()
+            flash("✅ Admin registered successfully!", "success")
+            return redirect(url_for('routes.login'))
+
+        except Exception as e:
+            flash(f"❌ Registration failed: {e}", "danger")
+        finally:
+            conn.close()
+
+    return render_template('register_admin.html')
 
 
-#---------------- Login -------------------------------
+#-------------login-------------------
 @routes.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -73,22 +97,37 @@ def login():
 
         conn = get_db_connection()
         user = conn.execute("SELECT * FROM Users WHERE email = ?", (email,)).fetchone()
-        conn.close()
 
         if user and check_password_hash(user['password'], password):
-            session['user_id'] = user['user_id']
+            session['email'] = user['email']
             session['role'] = user['role']
-            session['full_name'] = user['full_name']
 
-            if user['role'] == 'admin':
-                return redirect(url_for('routes.admin_dashboard'))
-            else:
+            if user['role'] == 'student':
+                # ✅ Get real student_id and name from Students table
+                profile = conn.execute("SELECT student_id, student_name FROM Students WHERE student_email = ?", (email,)).fetchone()
+                if profile:
+                    session['user_id'] = profile['student_id']
+                    session['full_name'] = profile['student_name']
+                else:
+                    session['user_id'] = None
+                    session['full_name'] = 'Student'
+
+                conn.close()
                 return redirect(url_for('routes.student_dashboard'))
-        else:
-            flash('Invalid email or password.', 'danger')
-    return render_template('login.html')
 
+            elif user['role'] == 'admin':
+                # ✅ Get name from Professors table
+                profile = conn.execute("SELECT professor_name FROM Professors WHERE professor_email = ?", (email,)).fetchone()
+                session['user_id'] = user['user_id']  # Admin uses Users.user_id
+                session['full_name'] = profile['professor_name'] if profile else 'Admin'
 
+                conn.close()
+                return redirect(url_for('routes.admin_dashboard'))
+
+        conn.close()
+        flash("❌ Invalid email or password.", "danger")
+
+    return render_template("login.html")
 
 
 
@@ -151,23 +190,21 @@ def admin_dashboard():
         total_pages=total_pages
     )
 
-
-
-
-# ------------------admin add course ------------------
+#-----------admin add course ---------
 @routes.route('/admin/add_course', methods=['GET', 'POST'])
 def add_course():
     conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
-    # Load dropdown data in advance for both GET and failed POST
+    # Load data for dropdowns
     cursor.execute("SELECT * FROM Professors")
     professors = cursor.fetchall()
     cursor.execute("SELECT course_id, course_name FROM Courses")
     courses = cursor.fetchall()
 
     if request.method == 'POST':
+        # Get form inputs
         course_id = request.form['course_id']
         course_name = request.form['course_name']
         department = request.form['department']
@@ -182,33 +219,44 @@ def add_course():
         prerequisite_ids = request.form.getlist('prerequisite_ids')
 
         try:
+            # 🚫 Check if course_id already exists
             cursor.execute("SELECT 1 FROM Courses WHERE course_id = ?", (course_id,))
             if cursor.fetchone():
                 flash("❌ Course ID already exists.", "danger")
                 return render_template("admin_add_course.html", professors=professors, courses=courses, form_data=request.form)
 
+            # 🚫 Check for professor schedule conflict
             cursor.execute("""
-                SELECT s.course_id FROM Teaching t
+                SELECT c.course_id, s.day_of_week, s.start_time, s.end_time
+                FROM Teaching t
                 JOIN Schedule s ON t.course_id = s.course_id
+                JOIN Courses c ON c.course_id = s.course_id
                 WHERE t.professor_id = ? AND s.day_of_week = ?
-                  AND NOT (? <= s.start_time OR ? >= s.end_time)
-            """, (professor_id, day_of_week, start_time, end_time))
-            if cursor.fetchone():
-                flash("❌ Schedule conflict for the professor.", "danger")
+                  AND NOT (TIME(?) <= TIME(s.start_time) OR TIME(?) >= TIME(s.end_time))
+            """, (professor_id, day_of_week, end_time, start_time))
+
+            conflict = cursor.fetchone()
+            if conflict:
+                conflict_time = f"{conflict['start_time']} - {conflict['end_time']}"
+                flash(f"❌ Schedule conflict: Professor already assigned to course {conflict['course_id']} on {day_of_week} ({conflict_time}).", "danger")
                 return render_template("admin_add_course.html", professors=professors, courses=courses, form_data=request.form)
 
+            # ✅ Insert into Courses
             cursor.execute("""
                 INSERT INTO Courses (course_id, course_name, department, description, credits, max_capacity)
                 VALUES (?, ?, ?, ?, ?, ?)
             """, (course_id, course_name, department, description, credits, max_capacity))
 
+            # ✅ Teaching assignment
             cursor.execute("INSERT INTO Teaching (course_id, professor_id) VALUES (?, ?)", (course_id, professor_id))
 
+            # ✅ Schedule
             cursor.execute("""
                 INSERT INTO Schedule (course_id, day_of_week, start_time, end_time, location)
                 VALUES (?, ?, ?, ?, ?)
             """, (course_id, day_of_week, start_time, end_time, location))
 
+            # ✅ Add prerequisites (if any)
             for prereq_id in prerequisite_ids:
                 if prereq_id != course_id:
                     cursor.execute("""
@@ -356,8 +404,7 @@ def student_dashboard():
         return redirect(url_for('routes.login'))
     return render_template('student_dashboard.html')
 
-
-
+#----------Student prerequisite--------------------
 @routes.route('/student/prerequisites', methods=['GET', 'POST'])
 def view_prerequisites():
     if session.get('role') != 'student':
@@ -369,19 +416,40 @@ def view_prerequisites():
     cursor.execute("SELECT course_id, course_name FROM Courses")
     courses = cursor.fetchall()
 
-    prerequisites = None
     selected_course_id = None
+    prerequisites = None
+    course_details = None
 
     if request.method == 'POST':
         selected_course_id = request.form['course_id']
-        cursor.execute("SELECT prerequisite_id FROM Prerequisites WHERE course_id = ?", (selected_course_id,))
+
+        # Full course details + professor
+        cursor.execute("""
+            SELECT c.*, s.day_of_week, s.start_time, s.end_time, s.location,
+                   p.professor_name, p.professor_email
+            FROM Courses c
+            LEFT JOIN Schedule s ON c.course_id = s.course_id
+            LEFT JOIN Teaching t ON c.course_id = t.course_id
+            LEFT JOIN Professors p ON t.professor_id = p.professor_id
+            WHERE c.course_id = ?
+        """, (selected_course_id,))
+        course_details = cursor.fetchone()
+
+        # Prerequisite courses
+        cursor.execute("""
+            SELECT c.course_id, c.course_name
+            FROM Prerequisites p
+            JOIN Courses c ON p.prerequisite_id = c.course_id
+            WHERE p.course_id = ?
+        """, (selected_course_id,))
         prerequisites = cursor.fetchall()
 
     conn.close()
     return render_template('student_view_prerequisites.html',
                            courses=courses,
-                           prerequisites=prerequisites,
-                           selected_course_id=selected_course_id)
+                           selected_course_id=selected_course_id,
+                           course_details=course_details,
+                           prerequisites=prerequisites)
 
 
 
@@ -650,10 +718,9 @@ def view_my_courses():
 
 
 
-
 @routes.route('/student/professors')
 def view_professors():
-    if session.get('role') != 'student':
+    if session.get('role') not in ['student', 'admin']:
         return redirect(url_for('routes.login'))
 
     conn = get_db_connection()
@@ -674,5 +741,6 @@ def view_professors():
     professors = cursor.fetchall()
     conn.close()
 
-    return render_template("student_view_professors.html", professors=professors)
+    return render_template("admin_view_professors.html", professors=professors)
+
 

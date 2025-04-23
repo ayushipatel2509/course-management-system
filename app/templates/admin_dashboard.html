@@ -71,14 +71,16 @@
     </style>
 </head>
 <body>
-    <h2>🛠️ Admin Dashboard</h2>
+    <h2> Admin Dashboard</h2>
 
     <div class="top-bar">
         <div class="left-buttons">
-            <a class="button green-button" href="{{ url_for('routes.add_course') }}">➕ Add New Course</a>
+            <a class="button green-button" href="{{ url_for('routes.add_course') }}"> Add New Course</a>
+            <a class="button green-button" href="{{ url_for('routes.view_professors') }}"> View Professors</a>
+
         </div>
         <div class="right-buttons">
-            <a class="button red-button" href="{{ url_for('routes.logout') }}">🔓 Logout</a>
+            <a class="button red-button" href="{{ url_for('routes.logout') }}"> Logout</a>
         </div>
     </div>
 
@@ -114,8 +116,8 @@
 
 
                 <td>
-                    <a class="button green-button" href="{{ url_for('routes.view_enrollments', course_id=course.course_id) }}">👥 View Students</a>
-                    <a class="button green-button" href="{{ url_for('routes.edit_course', course_id=course.course_id) }}">✏️ Edit</a>
+                    <a class="button green-button" href="{{ url_for('routes.view_enrollments', course_id=course.course_id) }}"> View Students</a>
+                    <a class="button green-button" href="{{ url_for('routes.edit_course', course_id=course.course_id) }}">️ Edit</a>
                     <a class="button red-button" href="{{ url_for('routes.delete_course', course_id=course.course_id) }}" onclick="return confirm('Are you sure you want to delete this course?')">🗑️ </a>
 
 

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container d-flex flex-column align-items-center justify-content-center min-vh-100 text-center">
+
+    <!-- Brand Heading -->
+    <h1 class="display-4 fw-bold text-primary mb-3"> Course Management Portal</h1>
+    <p class="lead text-muted mb-5">Select your role to get started</p>
+
+    <!-- Role Selection -->
+    <div class="d-flex gap-4">
+        <a href="{{ url_for('routes.register_student') }}" class="btn btn-lg btn-primary px-5 py-3 rounded-pill shadow">
+             Register as Student
+        </a>
+        <a href="{{ url_for('routes.register_admin') }}" class="btn btn-lg btn-secondary px-5 py-3 rounded-pill shadow">
+             Register as Admin
+        </a>
+    </div>
+
+    <!-- Login Redirect -->
+    <div class="mt-4">
+        <span class="text-muted">Already have an account?</span>
+        <a href="{{ url_for('routes.login') }}" class="ms-2 fw-bold text-decoration-none">Login here</a>
+    </div>
+</div>
+{% endblock %}

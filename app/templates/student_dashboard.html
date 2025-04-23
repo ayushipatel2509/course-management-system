@@ -64,11 +64,11 @@
         <h2>👋 Welcome, {{ session['full_name'] }}</h2>
 
         <div class="button-group">
-            <a href="{{ url_for('routes.add_drop_course') }}" class="button green-button">➕ Add / Drop Course</a>
-            <a href="{{ url_for('routes.view_my_courses') }}" class="button">📋 View My Courses</a>
-            <a href="{{ url_for('routes.view_prerequisites') }}" class="button">📘 View Prerequisites</a>
-            <a href="{{ url_for('routes.view_grades') }}" class="button">🎓 View Grades</a>
-            <a href="{{ url_for('routes.view_professors') }}" class="button">👨‍🏫 See Professors Details</a>
+            <a href="{{ url_for('routes.add_drop_course') }}" class="button green-button"> Add / Drop Course</a>
+            <a href="{{ url_for('routes.view_my_courses') }}" class="button"> View My Courses</a>
+            <a href="{{ url_for('routes.view_prerequisites') }}" class="button">View All Courses And Prerequisites</a>
+            <a href="{{ url_for('routes.view_grades') }}" class="button"> View Grades</a>
+
         </div>
 
         <a class="logout" href="{{ url_for('routes.logout') }}">🚪 Logout</a>
