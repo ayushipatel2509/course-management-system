@@ -39,23 +39,36 @@ SETTING UP THE PROJECT
 
 Step 1 : Git Clone (Copy the URL) 
 
+
 <img width="1049" alt="image" src="https://github.com/user-attachments/assets/ae785321-b63f-4919-8383-f0b7b3fb0da8" />
+
+
 
 Step 2 : Clone Repository in Pycharm
 
+
 <img width="1193" alt="image" src="https://github.com/user-attachments/assets/3e2d4652-9d1d-43d2-9b6e-ba947b95e5e0" />
 
+
 Step 3 : Create a virtaul environment (Recommended)
+
 python3 -m venv myenv 
 
+
 Step 4 : Activate virtual environment
+
 source myenv/bin/activate
 
+
 Step 5 : Install Packages
+
 pip install flask
 
+
 Step 6 : Run the app 
+
 python app.py
+
 (Click on the link and run on local machine)
 
 
