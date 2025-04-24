@@ -52,7 +52,7 @@ Step 2 : Clone Repository in Pycharm
 
 Step 3 : Create a virtaul environment (Recommended)
 
-python3 -m venv myenv 
+'python3 -m venv myenv' 
 
 
 Step 4 : Activate virtual environment
