@@ -33,6 +33,14 @@ Database Design
 - **Enrollment**: Tracks course enrollments
 
 
+SETTING UP THE PROJECT 
+
+1) Git Clone (Copy the URL) -
+
+<img width="1049" alt="image" src="https://github.com/user-attachments/assets/ae785321-b63f-4919-8383-f0b7b3fb0da8" />
+
+   
+
 
 
 
