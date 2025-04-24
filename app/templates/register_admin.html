@@ -4,46 +4,46 @@
     <h2 class="text-center mb-4">Admin Registration</h2>
 
     <form method="POST" class="mx-auto" style="max-width: 500px;" onsubmit="return validatePasswordMatch()">
-        <!-- Full Name -->
+
         <div class="mb-3">
             <label class="form-label">Full Name</label>
             <input type="text" class="form-control" name="full_name" required>
         </div>
 
-        <!-- Email -->
+
         <div class="mb-3">
             <label class="form-label">Email</label>
             <input type="email" class="form-control" name="email" required>
         </div>
 
-        <!-- Phone -->
+
         <div class="mb-3">
             <label class="form-label">Phone</label>
             <input type="text" class="form-control" name="phone" >
         </div>
 
-        <!-- Department -->
+
         <div class="mb-3">
             <label class="form-label">Department</label>
             <input type="text" class="form-control" name="department" required>
         </div>
 
-        <!-- Password -->
+
         <div class="mb-3">
             <label class="form-label">Password</label>
             <input type="password" class="form-control" name="password" id="passwordInput" required>
         </div>
 
-        <!-- Confirm Password -->
+
         <div class="mb-3">
             <label class="form-label">Re-enter Password</label>
             <input type="password" class="form-control" name="confirm_password" id="confirmPasswordInput" required>
         </div>
 
-        <!-- Submit -->
+
         <button type="submit" class="btn btn-secondary w-100">Register</button>
 
-        <!-- Redirect -->
+
         <div class="text-center mt-3">
             Already registered? <a href="{{ url_for('routes.login') }}">Login here</a>
         </div>

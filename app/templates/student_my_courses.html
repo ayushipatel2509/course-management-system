@@ -8,9 +8,15 @@
 <body class="bg-light">
 
 <div class="container mt-5">
-    <h2 class="mb-4 text-center">📚 My Enrolled Courses</h2>
+    <h2 class="mb-4 text-center"> My Enrolled Courses</h2>
 
     {% if courses %}
+    <div class="mb-3 text-end">
+        <span class="badge bg-info text-dark fs-6">
+             Total Credits Enrolled: <strong>{{ total_credits }}</strong>
+        </span>
+    </div>
+
     <table class="table table-bordered table-hover bg-white shadow-sm">
         <thead class="table-secondary">
             <tr>

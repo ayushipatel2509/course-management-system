@@ -4,22 +4,22 @@
     <h2 class="text-center mb-4">Login</h2>
 
     <form method="POST" class="mx-auto" style="max-width: 400px;">
-        <!-- Email -->
+
         <div class="mb-3">
             <label class="form-label">Email</label>
             <input type="email" class="form-control" name="email" required>
         </div>
 
-        <!-- Password -->
+
         <div class="mb-3">
             <label class="form-label">Password</label>
             <input type="password" class="form-control" name="password" required>
         </div>
 
-        <!-- Submit -->
+
         <button type="submit" class="btn btn-primary w-100">Login</button>
 
-        <!-- Redirect -->
+
         <div class="text-center mt-3">
             Not registered yet? <a href="{{ url_for('routes.home') }}">
             Register</a>

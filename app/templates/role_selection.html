@@ -1,25 +1,60 @@
 {% extends "base.html" %}
 {% block content %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
 <div class="container d-flex flex-column align-items-center justify-content-center min-vh-100 text-center">
 
-    <!-- Brand Heading -->
-    <h1 class="display-4 fw-bold text-primary mb-3"> Course Management Portal</h1>
-    <p class="lead text-muted mb-5">Select your role to get started</p>
+    <!-- Animated Heading -->
+    <h1 class="display-4 fw-bold text-primary mb-2 animate__animated animate__fadeInDown">
+         Course Management Portal
+    </h1>
+    <p class="lead text-muted mb-4 animate__animated animate__fadeIn animate__delay-1s">
+        Select your role to get started
+    </p>
 
-    <!-- Role Selection -->
-    <div class="d-flex gap-4">
-        <a href="{{ url_for('routes.register_student') }}" class="btn btn-lg btn-primary px-5 py-3 rounded-pill shadow">
-             Register as Student
-        </a>
-        <a href="{{ url_for('routes.register_admin') }}" class="btn btn-lg btn-secondary px-5 py-3 rounded-pill shadow">
-             Register as Admin
-        </a>
+    <!-- Glowing Card for Buttons -->
+    <div class="p-4 bg-white rounded-4 shadow animate__animated animate__zoomIn animate__delay-1s">
+        <div class="d-flex flex-column flex-md-row gap-4 justify-content-center">
+            <!-- Student -->
+            <a href="{{ url_for('routes.register_student') }}"
+               class="btn btn-lg btn-outline-primary px-5 py-3 rounded-pill fw-semibold shadow-sm role-btn">
+                 Register as Student
+            </a>
+
+            <!-- Admin -->
+            <a href="{{ url_for('routes.register_admin') }}"
+               class="btn btn-lg btn-outline-secondary px-5 py-3 rounded-pill fw-semibold shadow-sm role-btn">
+                 Register as Admin
+            </a>
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="mt-4 mb-2 animate__animated animate__fadeInUp animate__delay-2s">
+        <hr style="width: 200px; border-top: 2px dashed #ccc;">
     </div>
 
     <!-- Login Redirect -->
-    <div class="mt-4">
+    <div class="animate__animated animate__fadeInUp animate__delay-2s">
         <span class="text-muted">Already have an account?</span>
         <a href="{{ url_for('routes.login') }}" class="ms-2 fw-bold text-decoration-none">Login here</a>
     </div>
 </div>
+
+
+<style>
+    .role-btn {
+        transition: all 0.3s ease-in-out;
+    }
+
+    .role-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 12px rgba(0, 123, 255, 0.3);
+    }
+
+    body {
+        background: linear-gradient(to right, #f1f4f9, #dff3f7);
+    }
+</style>
 {% endblock %}

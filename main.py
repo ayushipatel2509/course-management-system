@@ -80,10 +80,10 @@ CREATE TABLE IF NOT EXISTS Users (
 
 """)
 
-print("✅ Database and tables initialized successfully.")
+print(" Database and tables initialized successfully.")
 
 cursor.executescript("""
--- 🧑‍🏫 Professors
+--  Professors
 INSERT OR IGNORE INTO Professors (professor_name, department, professor_email) VALUES
 ('Dr. James Smith', 'Computer Science', 'jsmith@msu.edu'),
 ('Prof. Emily Jones', 'Computer Science', 'ejones@msu.edu'),
@@ -100,34 +100,6 @@ INSERT OR IGNORE INTO Professors (professor_name, department, professor_email) V
 ('Prof. Daniel Walker', 'Data Analytics', 'dwalker@msu.edu'),
 ('Dr. Sophia Hall', 'Computer Networks', 'shall@msu.edu'),
 ('Prof. Brian Allen', 'Human-Computer Interaction', 'ballen@msu.edu');
-
-
-
--- Students
-INSERT OR IGNORE INTO Students(student_id,student_name,student_email ,student_phone,gpa) VALUES
-('111','Kruti','kruti@gmail.com' , '2323232323' , 3);
-
-
--- 📘 Courses
-INSERT OR IGNORE INTO Courses (course_id, course_name, department, description, credits, max_capacity) VALUES
-('CS101', 'Adv Programming', 'Computer Science', 'Adv programming in Python', 3, 25),
-('CS102', 'Intro to Programming', 'Computer Science', 'Basics of programming in Python', 3, 25);
-
-
--- 🔗 Prerequisites (selected only for few courses)
-INSERT OR IGNORE INTO Prerequisites (course_id, prerequisite_id) VALUES
-('CS102','CS101');
-
-
-
--- 🕒 Schedule
-INSERT OR IGNORE INTO Schedule (course_id, day_of_week, start_time, end_time, location) VALUES
-('CS101', 'Monday', '09:00', '10:15', 'Room 101');
-
-
--- 👨‍🏫 Teaching assignments
-INSERT OR IGNORE INTO Teaching (course_id, professor_id) VALUES
-('CS101', 1);
 
 
 """)

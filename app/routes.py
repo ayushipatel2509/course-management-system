@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, session, flash,
 from werkzeug.security import generate_password_hash, check_password_hash
 from model import get_db_connection
 import sqlite3
-import re
+
 
 routes = Blueprint('routes', __name__)
 
@@ -10,6 +10,9 @@ routes = Blueprint('routes', __name__)
 @routes.route('/')
 def home():
     return render_template('role_selection.html')
+
+
+
 
 #--------------------student register----------------------
 @routes.route('/register/student', methods=['GET', 'POST'])
@@ -24,7 +27,7 @@ def register_student():
         confirm_password = request.form['confirm_password']
 
         if password != confirm_password:
-            flash("❌ Passwords do not match.", "danger")
+            flash(" Passwords do not match.", "danger")
             return redirect(url_for('routes.register_student'))
 
         hashed_password = generate_password_hash(password)
@@ -39,15 +42,18 @@ def register_student():
             )
 
             conn.commit()
-            flash("✅ Registered successfully!", "success")
+            flash(" Registered successfully!", "success")
             return redirect(url_for('routes.login'))
 
         except Exception as e:
-            flash(f"❌ Registration failed: {e}", "danger")
+            flash(f" Registration failed: {e}", "danger")
         finally:
             conn.close()
 
     return render_template('register_student.html')
+
+
+
 
 
 #------------------admin register-------------------------
@@ -62,7 +68,7 @@ def register_admin():
         confirm_password = request.form['confirm_password']
 
         if password != confirm_password:
-            flash("❌ Passwords do not match.", "danger")
+            flash(" Passwords do not match.", "danger")
             return redirect(url_for('routes.register_admin'))
 
         hashed_password = generate_password_hash(password)
@@ -77,18 +83,20 @@ def register_admin():
                          (name, email, department))
 
             conn.commit()
-            flash("✅ Admin registered successfully!", "success")
+            flash(" Admin registered successfully!", "success")
             return redirect(url_for('routes.login'))
 
         except Exception as e:
-            flash(f"❌ Registration failed: {e}", "danger")
+            flash(f" Registration failed: {e}", "danger")
         finally:
             conn.close()
 
     return render_template('register_admin.html')
 
 
-#-------------login-------------------
+
+
+#-------------login------------------------------------
 @routes.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -103,7 +111,7 @@ def login():
             session['role'] = user['role']
 
             if user['role'] == 'student':
-                # ✅ Get real student_id and name from Students table
+
                 profile = conn.execute("SELECT student_id, student_name FROM Students WHERE student_email = ?", (email,)).fetchone()
                 if profile:
                     session['user_id'] = profile['student_id']
@@ -116,7 +124,7 @@ def login():
                 return redirect(url_for('routes.student_dashboard'))
 
             elif user['role'] == 'admin':
-                # ✅ Get name from Professors table
+
                 profile = conn.execute("SELECT professor_name FROM Professors WHERE professor_email = ?", (email,)).fetchone()
                 session['user_id'] = user['user_id']  # Admin uses Users.user_id
                 session['full_name'] = profile['professor_name'] if profile else 'Admin'
@@ -142,7 +150,7 @@ def logout():
 
 
 
-# -----admin dashboard --------------------
+# -----------------------admin dashboard --------------------
 @routes.route('/admin/dashboard')
 def admin_dashboard():
     if 'user_id' not in session or session['role'] != 'admin':
@@ -155,12 +163,12 @@ def admin_dashboard():
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # Total courses
+
     cursor.execute("SELECT COUNT(DISTINCT c.course_id) FROM Courses c")
     total_courses = cursor.fetchone()[0]
     total_pages = (total_courses + per_page - 1) // per_page
 
-    # Main query with deduplicated rows using GROUP BY
+
     cursor.execute("""
         SELECT 
             c.course_id, 
@@ -190,7 +198,11 @@ def admin_dashboard():
         total_pages=total_pages
     )
 
-#-----------admin add course ---------
+
+
+
+
+#--------------------------admin add course ------------------------
 @routes.route('/admin/add_course', methods=['GET', 'POST'])
 def add_course():
     conn = get_db_connection()
@@ -219,13 +231,13 @@ def add_course():
         prerequisite_ids = request.form.getlist('prerequisite_ids')
 
         try:
-            # 🚫 Check if course_id already exists
+            #  Check if course_id already exists
             cursor.execute("SELECT 1 FROM Courses WHERE course_id = ?", (course_id,))
             if cursor.fetchone():
                 flash("❌ Course ID already exists.", "danger")
                 return render_template("admin_add_course.html", professors=professors, courses=courses, form_data=request.form)
 
-            # 🚫 Check for professor schedule conflict
+            #  Check for professor schedule conflict
             cursor.execute("""
                 SELECT c.course_id, s.day_of_week, s.start_time, s.end_time
                 FROM Teaching t
@@ -238,25 +250,25 @@ def add_course():
             conflict = cursor.fetchone()
             if conflict:
                 conflict_time = f"{conflict['start_time']} - {conflict['end_time']}"
-                flash(f"❌ Schedule conflict: Professor already assigned to course {conflict['course_id']} on {day_of_week} ({conflict_time}).", "danger")
+                flash(f" Schedule conflict: Professor already assigned to course {conflict['course_id']} on {day_of_week} ({conflict_time}).", "danger")
                 return render_template("admin_add_course.html", professors=professors, courses=courses, form_data=request.form)
 
-            # ✅ Insert into Courses
+            #  Insert into Courses
             cursor.execute("""
                 INSERT INTO Courses (course_id, course_name, department, description, credits, max_capacity)
                 VALUES (?, ?, ?, ?, ?, ?)
             """, (course_id, course_name, department, description, credits, max_capacity))
 
-            # ✅ Teaching assignment
+            #  Teaching assignment
             cursor.execute("INSERT INTO Teaching (course_id, professor_id) VALUES (?, ?)", (course_id, professor_id))
 
-            # ✅ Schedule
+            #  Schedule
             cursor.execute("""
                 INSERT INTO Schedule (course_id, day_of_week, start_time, end_time, location)
                 VALUES (?, ?, ?, ?, ?)
             """, (course_id, day_of_week, start_time, end_time, location))
 
-            # ✅ Add prerequisites (if any)
+            #  Add prerequisites (if any)
             for prereq_id in prerequisite_ids:
                 if prereq_id != course_id:
                     cursor.execute("""
@@ -265,11 +277,11 @@ def add_course():
                     """, (course_id, prereq_id))
 
             conn.commit()
-            flash("✅ Course added successfully!", "success")
+            flash(" Course added successfully!", "success")
             return redirect(url_for('routes.admin_dashboard'))
 
         except Exception as e:
-            flash(f"❌ Error: {str(e)}", "danger")
+            flash(f" Error: {str(e)}", "danger")
             return render_template("admin_add_course.html", professors=professors, courses=courses, form_data=request.form)
         finally:
             conn.close()
@@ -277,7 +289,11 @@ def add_course():
     # GET request
     return render_template("admin_add_course.html", professors=professors, courses=courses, form_data={})
 
-#-------------- Delete Course ----------------------------------
+
+
+
+
+#-------------------------- Delete Course ----------------------------------
 @routes.route('/admin/delete_course/<course_id>')
 def delete_course(course_id):
     conn = get_db_connection()
@@ -285,15 +301,14 @@ def delete_course(course_id):
     cursor.execute("DELETE FROM Courses WHERE course_id = ?", (course_id,))
     conn.commit()
     conn.close()
-    flash("🗑️ Course deleted!", "success")
+    flash(" Course deleted!", "success")
     return redirect(url_for('routes.admin_dashboard'))
 
 
 
 
 
-
-#-------------- View Enrollments ------------------------------
+#------------------------- View Enrollments ------------------------------
 @routes.route('/admin/enrollments/<course_id>')
 def view_enrollments(course_id):
     conn = get_db_connection()
@@ -310,8 +325,8 @@ def view_enrollments(course_id):
 
 
 
-#--------------admin edit course----------------------------
-#--------------admin edit course----------------------------
+
+#---------------------------admin edit course----------------------------
 @routes.route('/admin/edit_course/<course_id>', methods=['GET', 'POST'])
 def edit_course(course_id):
     conn = get_db_connection()
@@ -397,14 +412,23 @@ def edit_course(course_id):
                            courses=all_courses,
                            selected_prereqs=selected_prereqs)
 
-# ---------------- Student Dashboard ---------------------------
+
+
+
+
+
+# ------------------------------- Student Dashboard ---------------------------
 @routes.route('/student/dashboard')
 def student_dashboard():
     if session.get('role') != 'student':
         return redirect(url_for('routes.login'))
     return render_template('student_dashboard.html')
 
-#----------Student prerequisite--------------------
+
+
+
+
+#----------------------------Student prerequisite--------------------
 @routes.route('/student/prerequisites', methods=['GET', 'POST'])
 def view_prerequisites():
     if session.get('role') != 'student':
@@ -455,18 +479,11 @@ def view_prerequisites():
 
 
 
-#--------------student grades----------------
-@routes.route('/student/grades')
-def view_grades():
-    if session.get('role') != 'student':
-        return redirect(url_for('routes.login'))
-    return "<h3>Grades view coming soon!</h3>"
 
 
 
 
-
-#---------- Add/Drop Course Page ----------
+#------------------------------ Add/Drop Course Page ---------------------
 @routes.route('/student/add_drop_course', methods=['GET', 'POST'])
 def add_drop_course():
     if session.get('role') != 'student':
@@ -475,14 +492,19 @@ def add_drop_course():
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # For dropdown search
+
+    page = request.args.get('page', default=1, type=int)
+    per_page = 5
+    offset = (page - 1) * per_page
+
+
     cursor.execute("SELECT course_id, course_name FROM Courses")
     all_courses = cursor.fetchall()
 
     selected_course_id = request.form.get('course_id') if request.method == 'POST' else None
 
     if selected_course_id:
-        # Filtered course query
+
         cursor.execute("""
             SELECT 
                 c.course_id, 
@@ -503,8 +525,10 @@ def add_drop_course():
             GROUP BY 
                 c.course_id, c.course_name, c.department, c.credits, p.professor_name, c.max_capacity
         """, (selected_course_id,))
+        courses = cursor.fetchall()
+        total_courses = 1
     else:
-        # All courses query
+
         cursor.execute("""
             SELECT 
                 c.course_id, 
@@ -523,11 +547,16 @@ def add_drop_course():
             LEFT JOIN Schedule s ON c.course_id = s.course_id
             GROUP BY 
                 c.course_id, c.course_name, c.department, c.credits, p.professor_name, c.max_capacity
-        """)
+            LIMIT ? OFFSET ?
+        """, (per_page, offset))
+        courses = cursor.fetchall()
 
-    courses = cursor.fetchall()
+        cursor.execute("SELECT COUNT(*) FROM Courses")
+        total_courses = cursor.fetchone()[0]
 
-    # Get courses the student is enrolled in
+    total_pages = (total_courses + per_page - 1) // per_page
+
+    # Get enrolled course ids
     cursor.execute("SELECT course_id FROM Enrollment WHERE student_id = ?", (session['user_id'],))
     enrolled = [row['course_id'] for row in cursor.fetchall()]
 
@@ -538,11 +567,16 @@ def add_drop_course():
         courses=courses,
         enrolled=enrolled,
         all_courses=all_courses,
-        selected_course_id=selected_course_id
+        selected_course_id=selected_course_id,
+        page=page,
+        total_pages=total_pages
     )
 
 
-#---------- Enroll in Course ----------
+
+
+
+#------------------- Enroll in Course ------------------
 @routes.route('/student/enroll_course', methods=['POST'])
 def enroll_course():
     if session.get('role') != 'student':
@@ -557,7 +591,7 @@ def enroll_course():
     # 1. Already enrolled?
     cursor.execute("SELECT * FROM Enrollment WHERE student_id = ? AND course_id = ?", (student_id, course_id))
     if cursor.fetchone():
-        flash("⚠️ You are already enrolled in this course.", "warning")
+        flash(" You are already enrolled in this course.", "warning")
         conn.close()
         return redirect(url_for('routes.add_drop_course'))
 
@@ -570,7 +604,7 @@ def enroll_course():
         enrolled_ids = [row['course_id'] for row in cursor.fetchall()]
         missing = [pre for pre in prereq_ids if pre not in enrolled_ids]
         if missing:
-            flash("❌ You must enroll in prerequisite course(s): " + ", ".join(missing), "danger")
+            flash(" You must enroll in prerequisite course(s): " + ", ".join(missing), "danger")
             conn.close()
             return redirect(url_for('routes.add_drop_course'))
 
@@ -604,7 +638,7 @@ def enroll_course():
 
                 # Check time overlap
                 if not (new_end <= exist_start or new_start >= exist_end):
-                    flash(f"❌ Schedule conflict with {existing_course} on {new_day} ({exist_start}-{exist_end})", "danger")
+                    flash(f" Schedule conflict with {existing_course} on {new_day} ({exist_start}-{exist_end})", "danger")
                     conn.close()
                     return redirect(url_for('routes.add_drop_course'))
 
@@ -617,7 +651,7 @@ def enroll_course():
     enrolled_count = cursor.fetchone()[0]
 
     if enrolled_count >= max_capacity:
-        flash("❌ This course is already full.", "danger")
+        flash(" This course is already full.", "danger")
         conn.close()
         return redirect(url_for('routes.add_drop_course'))
 
@@ -631,7 +665,7 @@ def enroll_course():
     total_credits = cursor.fetchone()[0] or 0
 
     if total_credits + course_credits > 12:
-        flash(f"❌ You cannot exceed 12 total credits. You're currently at {total_credits}.", "danger")
+        flash(f" You cannot exceed 12 total credits. You're currently at {total_credits}.", "danger")
         conn.close()
         return redirect(url_for('routes.add_drop_course'))
 
@@ -640,10 +674,14 @@ def enroll_course():
     conn.commit()
     conn.close()
 
-    flash("✅ Successfully enrolled!", "success")
+    flash(" Successfully enrolled!", "success")
     return redirect(url_for('routes.add_drop_course'))
 
-#---------- Drop Course ----------
+
+
+
+
+#----------------------- Drop Course --------------------
 @routes.route('/student/drop_course', methods=['POST'])
 def drop_course():
     if session.get('role') != 'student':
@@ -655,7 +693,7 @@ def drop_course():
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # 🛡️ Check if this course is a prerequisite for any other course the student is enrolled in
+    #  Check if this course is a prerequisite for any other course the student is enrolled in
     cursor.execute("""
         SELECT p.course_id
         FROM Prerequisites p
@@ -667,11 +705,11 @@ def drop_course():
 
     if dependent_courses:
         course_ids = [row['course_id'] for row in dependent_courses]
-        flash(f"❌ You cannot drop this course. It is a prerequisite for: {', '.join(course_ids)}", "danger")
+        flash(f" You cannot drop this course. It is a prerequisite for: {', '.join(course_ids)}", "danger")
         conn.close()
         return redirect(url_for('routes.add_drop_course'))
 
-    # ✅ Safe to drop
+    #  Safe to drop
     cursor.execute("DELETE FROM Enrollment WHERE student_id = ? AND course_id = ?", (student_id, course_id))
     conn.commit()
     conn.close()
@@ -680,8 +718,7 @@ def drop_course():
     return redirect(url_for('routes.add_drop_course'))
 
 
-
-#-----------------my courses-------------
+# ----------------------- My Courses -----------------
 @routes.route('/student/my_courses')
 def view_my_courses():
     if session.get('role') != 'student':
@@ -709,13 +746,15 @@ def view_my_courses():
         WHERE e.student_id = ?
         GROUP BY c.course_id
     """, (student_id,))
+
     enrolled_courses = cursor.fetchall()
+
+    # Calculate total credits
+    total_credits = sum(course['credits'] for course in enrolled_courses)
+
     conn.close()
 
-    return render_template('student_my_courses.html', courses=enrolled_courses)
-
-
-
+    return render_template('student_my_courses.html', courses=enrolled_courses, total_credits=total_credits)
 
 
 @routes.route('/student/professors')

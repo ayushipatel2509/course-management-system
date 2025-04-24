@@ -8,7 +8,7 @@
 <body class="bg-light">
 
 <div class="container mt-5">
-    <h2 class="text-center mb-4">📋 View Course Details & Prerequisites</h2>
+    <h2 class="text-center mb-4"> View Course Details & Prerequisites</h2>
 
     <form method="POST" class="mb-4">
         <div class="row justify-content-center">
@@ -32,7 +32,7 @@
     {% if course_details %}
     <div class="card shadow-sm mb-4">
         <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">📘 Course Information</h5>
+            <h5 class="mb-0"> Course Information</h5>
         </div>
         <div class="card-body">
             <p><strong>Course ID:</strong> {{ course_details.course_id }}</p>
@@ -51,7 +51,7 @@
     {% if prerequisites is not none %}
     <div class="card shadow-sm">
         <div class="card-header bg-secondary text-white">
-            <h5 class="mb-0">📚 Prerequisite Courses</h5>
+            <h5 class="mb-0"> Prerequisite Courses</h5>
         </div>
         <div class="card-body">
             {% if prerequisites %}
@@ -63,7 +63,7 @@
                     {% endfor %}
                 </ul>
             {% else %}
-                <p class="text-success">✅ This course has no prerequisites.</p>
+                <p class="text-success">This course has no prerequisites.</p>
             {% endif %}
         </div>
     </div>
