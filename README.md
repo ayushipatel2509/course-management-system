@@ -72,34 +72,6 @@ python app.py
 (Click on the link and run on local machine)
 
 
-Quick Setup 
-
-
-```bash
-# Step 1 : Git Clone (Copy the URL) 
-
-<img width="1049" alt="image" src="https://github.com/user-attachments/assets/ae785321-b63f-4919-8383-f0b7b3fb0da8" />
-
-
-# Create and activate virtual environment
-# Windows
-python -m venv venv && venv\Scripts\activate
-# macOS/Linux
-# python3 -m venv venv && source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Initialize the database
-python model.py
-
-# Run the Flask app
-python app.py
-
-# Visit the application
-# Open your browser and go to: http://127.0.0.1:5000
-
-
 
    
 
