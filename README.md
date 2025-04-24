@@ -1,5 +1,7 @@
 Course Management System
 
+Click here for video presentation(https://drive.google.com/file/d/1cmCKqevcpTEmhPn_odOtcOATqYnmvYOe/view?usp=sharing)
+
 This project is a Course Management System built using Flask and SQLite for managing student enrollments, course schedules, prerequisites, and professor assignments.
 Designed as a full-stack web application, it provides separate dashboards and role-based access for students and administrators. Students can register, enroll in
 available courses, and manage their schedule, while administrators can add or edit courses, assign professors, and monitor enrollments. The system enforces critical
